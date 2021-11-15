@@ -1,2 +1,2 @@
 # cidgoh_qc
-Workflow for quality check for NGS data
+Nextflow workflow for quality check for NGS data
