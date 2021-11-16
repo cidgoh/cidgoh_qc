@@ -52,7 +52,11 @@ $ nextflow run /path_of_cidgoh_qc/cidgoh_qc/main.nf -profile slurm --input your_
 
 
 
+## How to check running performance
 
+The nextflow reports are under "Reports" of your result folder.
+
+ ![timeline](/imgs/timeline.png)
 
 
 
