@@ -27,7 +27,7 @@ $ module load nextflow/21.04.3
 $ git clone https://github.com/cidgoh/cidgoh_qc.git
 ```
 
-> **_TIPS:_**  We have set up a default version on the Cedar cluster at /project/rrg-whsiao-ab/shared_tools/cidgoh_qc
+> **_TIPS:_**  We have set up a default version on the Cedar cluster at `/project/rrg-whsiao-ab/shared_tools/cidgoh_qc`
 
 ## How to use
 
@@ -48,7 +48,7 @@ $ nextflow run /path_of_cidgoh_qc/cidgoh_qc/main.nf -profile slurm --input your_
 
 ```
 
-> **_TIPS:_**  If you run job on the Cedar cluste, you don't need to add --workDir because we have set up a default work_folder at /project/rrg-whsiao-ab/misc/tmp_work_nextflow/.
+> **_TIPS:_**  If you run job on the Cedar cluste, you don't need to add --workDir because we have set up a default work_folder at `/project/rrg-whsiao-ab/misc/tmp_work_nextflow`.
 
 
 
@@ -58,7 +58,7 @@ The nextflow reports are under "Reports" of your result folder.
 
  ![timeline](/imgs/timeline.png)
 
-> **_TIPS:_**  According to the used resources, you can adjust default resources request under 'conf/slurm.config'
+> **_TIPS:_**  According to the used resources, you can adjust default resources request under `conf/slurm.config`
 
 For example:
 ```
