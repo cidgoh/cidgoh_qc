@@ -17,3 +17,8 @@ $ module load nextflow/21.04.3
 
 
 2. Install any of [`Docker`](https://docs.docker.com/engine/installation/), [`Singularity`](https://www.sylabs.io/guides/3.0/user-guide/) or [`Conda`](https://conda.io/miniconda.html) as package manager. 
+
+> **_NOTE:_**  Docker and Conda are not allowed on the Cedar cluster. By default, singularity is in the default tools
+
+
+
