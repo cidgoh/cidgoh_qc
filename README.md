@@ -25,6 +25,7 @@ $ module load nextflow/21.04.3
 
 ``` 
 $ git clone https://github.com/cidgoh/cidgoh_qc.git
+$ cd cidgoh_qc
 ```
 
 > **_TIPS:_**  We have set up a default version on the Cedar cluster at `/project/rrg-whsiao-ab/shared_tools/cidgoh_qc`
@@ -34,7 +35,7 @@ $ git clone https://github.com/cidgoh/cidgoh_qc.git
 Use singularity, docker or conda to mangage dependencies
 
 ```
-$ nextflow run /path_of_cidgoh_qc/cidgoh_qc/main.nf -profile singularity --input your_run_data/*_R{1,2}.fastq.gz
+$ nextflow run main.nf -profile singularity --input your_run_data/*_R{1,2}.fastq.gz
  --outdir output_folder --workDir work_folder
 
 ```
@@ -43,7 +44,7 @@ $ nextflow run /path_of_cidgoh_qc/cidgoh_qc/main.nf -profile singularity --input
 Use slurm to submit jobs
 
 ```
-$ nextflow run /path_of_cidgoh_qc/cidgoh_qc/main.nf -profile slurm --input your_run_data/*_R{1,2}.fastq.gz
+$ nextflow run main.nf -profile slurm --input your_run_data/*_R{1,2}.fastq.gz
  --outdir output_folder --workDir work_folder
 
 ```
