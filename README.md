@@ -31,9 +31,11 @@ $ git clone https://github.com/cidgoh/cidgoh_qc.git
 
 ## How to use
 
-nextflow run /path_of_cidgoh_qc/cidgoh_qc/main.nf -profile slurm --input your_run_data/*_R{1,2}.fastq.gz
+```
+$nextflow run /path_of_cidgoh_qc/cidgoh_qc/main.nf -profile slurm --input your_run_data/*_R{1,2}.fastq.gz
  --outdir output_folder --workDir work_folder
- 
+
+```
 
 
 
