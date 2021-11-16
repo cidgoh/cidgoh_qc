@@ -9,7 +9,7 @@ Nextflow workflow for quality check for NGS data
 
 1. Install [`Nextflow`](https://www.nextflow.io/docs/latest/getstarted.html#installation) (`>=21.04.0`)
 
-Tips: You can load nextflow on the Cedar cluster like this: 
+> **_NOTE:_**  You can load nextflow on the Cedar cluster like this: 
 
 ``` 
 $ module load nextflow/21.04.3 
