@@ -5,7 +5,7 @@ Nextflow workflow for quality check for NGS data
 
 **cidgoh_qc** is a bioinformatics analysis workflow based on nextflow to perform QC analysis.
 
-## Usage
+## How to install
 
 1. Install [`Nextflow`](https://www.nextflow.io/docs/latest/getstarted.html#installation) (`>=21.04.0`)
 
@@ -20,5 +20,15 @@ $ module load nextflow/21.04.3
 
 > **_NOTE:_**  Docker and Conda are not allowed on the Cedar cluster. By default, singularity is in the default tools
 
+
+3. Download source code from github
+
+``` 
+$ https://github.com/cidgoh/cidgoh_qc.git
+```
+
+> **_NOTE:_**  We have set up a default version on the Cedar cluster at /project/rrg-whsiao-ab/shared_tools/cidgoh_qc
+
+## How to use
 
 
