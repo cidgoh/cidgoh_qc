@@ -31,11 +31,28 @@ $ git clone https://github.com/cidgoh/cidgoh_qc.git
 
 ## How to use
 
+Use singularity, docker or conda to mangage dependencies
+
 ```
-$nextflow run /path_of_cidgoh_qc/cidgoh_qc/main.nf -profile slurm --input your_run_data/*_R{1,2}.fastq.gz
+$ nextflow run /path_of_cidgoh_qc/cidgoh_qc/main.nf -profile singularity --input your_run_data/*_R{1,2}.fastq.gz
  --outdir output_folder --workDir work_folder
 
 ```
+
+
+Use slurm to submit jobs
+
+```
+$ nextflow run /path_of_cidgoh_qc/cidgoh_qc/main.nf -profile slurm --input your_run_data/*_R{1,2}.fastq.gz
+ --outdir output_folder --workDir work_folder
+
+```
+
+> **_TIPS:_**  If you run job on the Cedar cluste, you don't need to add --workDir because we have set up a default work_folder at /project/rrg-whsiao-ab/misc/tmp_work_nextflow/.
+
+
+
+
 
 
 
