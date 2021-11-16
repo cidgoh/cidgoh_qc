@@ -58,5 +58,22 @@ The nextflow reports are under "Reports" of your result folder.
 
  ![timeline](/imgs/timeline.png)
 
+> **_TIPS:_**  According to the used resources, you can adjust default resources request under 'conf/slurm.config'
+
+For example:
+```
+params {
+  account = "xxxx"
+  runTime       = 2.h
+  singleCPUMem  = 1.GB 
+}
+
+ withName:fastqc {
+    cpus = 4
+    memory = {params.singleCPUMem * 4 * task.attempt}
+    time = {params.runTime * task.attempt}
+  }
+```
+
 
 
