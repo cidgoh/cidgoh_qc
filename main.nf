@@ -1,104 +1,79 @@
-#!/usr/bin/env nextflow
+                                                                                                                                                    #!/usr/bin/env nextflow
+/*
+========================================================================================
+    cidgoh_qc
+========================================================================================
+    Github : https://github.com/cidgoh/cidgoh_qc
+    Website: https://cidgoh.ca/
+----------------------------------------------------------------------------------------
+*/
 
-// enable dsl2
 nextflow.enable.dsl = 2
 
 /*
- * pipeline input parameters
- */
-
-//params.input = "$baseDir/sample_data/*_{R1,R2}.fastq.gz"
-params.outdir = "${PWD}/results"
-
-def helpMessage() {
-    log.info qcHeader()
-    log.info """\
-         CIDGOH - QC PIPELINE (v0.1)
-         ===================================
-         input        : ${params.input}
-         outdir       : ${params.outdir}
-         """         .stripIndent()
-}
-
-
-def qcHeader(){
-    return """
-        ░█████╗░██╗██████╗░░██████╗░░█████╗░██╗░░██╗
-        ██╔══██╗██║██╔══██╗██╔════╝░██╔══██╗██║░░██║
-        ██║░░╚═╝██║██║░░██║██║░░██╗░██║░░██║███████║
-        ██║░░██╗██║██║░░██║██║░░╚██╗██║░░██║██╔══██║
-        ╚█████╔╝██║██████╔╝╚██████╔╝╚█████╔╝██║░░██║
-        ░╚════╝░╚═╝╚═════╝░░╚═════╝░░╚════╝░╚═╝░░╚═╝
-    """.stripIndent()
-}
-
-helpMessage()
-
-
-/*
-Channel
-    .fromFilePairs(params.input, checkIfExists: true )
-    .set{ read_pairs_ch }
-
-process fastqc {
-    tag "FASTQC"
-    publishDir "${params.outdir}/fastqc_report"
-
-    input:
-    tuple sample_id, path(reads) from read_pairs_ch
-
-    output:
-    path "fastqc_${sample_id}_logs" into fastqc_ch
-
-    script:
-    """
-    mkdir fastqc_${sample_id}_logs
-    fastqc -o fastqc_${sample_id}_logs -f fastq -q ${reads}
-    """
-}
-
-process multiqc {
-    tag "MULTIQC"
-    publishDir params.outdir, mode:'copy'
-
-    input:
-    path '*' from fastqc_ch.collect()
-
-    output:
-    path 'multiqc_report.html'
-
-    script:
-    """
-    multiqc .
-    """
-}
-
+========================================================================================
+    GENOME PARAMETER VALUES
+========================================================================================
 */
+
+
+params.fasta         = WorkflowMainQC.getGenomeAttribute(params, 'fasta')
 
 
 /*
 ========================================================================================
-    RUN ILLUMINA WORKFLOW FOR PIPELINE
+    VALIDATE & PRINT PARAMETER SUMMARY
 ========================================================================================
 */
 
-include { illumina } from './workflows/illumina.nf'
-workflow{
-  main:
+WorkflowMainQC.initialise(workflow, params, log)
 
+/*
+========================================================================================
+    NAMED WORKFLOW FOR PIPELINE
+========================================================================================
+*/
 
-  //  Channel
-    //    .fromFilePairs("$baseDir/sample_data/*_{R1,R2}.fastq.gz", checkIfExists: true, type: 'file')
-      //  .set{ read_pairs_ch }
-
-    illumina()
-
+if (params.platform == 'illumina') {
+    include { ILLUMINA } from './workflows/illumina'
+} else if (params.platform == 'nanopore') {
+    include { NANOPORE } from './workflows/nanopore'
 }
 
-  workflow.onComplete {
-      if ( workflow.success ) {
-        log.info "[$workflow.complete] >> Script finished SUCCESSFULLY after $workflow.duration"
-      } else {
-        log.info "[$workflow.complete] >> Script finished with ERRORS after $workflow.duration"
-      }
+
+//
+// WORKFLOW: Run main QC analysis pipeline
+//
+
+workflow CIDGOH_QC {
+    //
+    // WORKFLOW: QC analysis for Illumina data
+    //
+    if (params.platform == 'illumina') {
+        ILLUMINA ()
+
+    //
+    // WORKFLOW: QC analysis for Nanopore data
+    //
+    } else if (params.platform == 'nanopore') {
+        NANOPORE ()
+    }
 }
+
+
+/*
+========================================================================================
+    RUN ALL WORKFLOWS
+========================================================================================
+*/
+
+
+workflow {
+    CIDGOH_QC ()
+}
+
+/*
+========================================================================================
+    THE END
+========================================================================================
+*/

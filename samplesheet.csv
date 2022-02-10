@@ -1,4 +1,0 @@
-sample,fastq_1,fastq_2
-sample1,sample_data/sample1_1.fastq.gz,sample_data/sample1_2.fastq.gz
-sample2,sample_data/sample2_1.fastq.gz,sample_data/sample2_2.fastq.gz
-sample3,sample_data/sample3_1.fastq.gz,sample_data/sample3_2.fastq.gz

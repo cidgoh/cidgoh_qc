@@ -1,10 +1,9 @@
 // Import generic module functions
-include { saveFiles; getProcessName } from './functions'
+include { saveFiles } from './functions'
 
 params.options = [:]
 
-process SAMPLESHEET_CHECK {
-    tag "$samplesheet"
+process GET_SOFTWARE_VERSIONS {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:'pipeline_info', meta:[:], publish_by_meta:[]) }
@@ -16,24 +15,19 @@ process SAMPLESHEET_CHECK {
         container "quay.io/biocontainers/python:3.8.3"
     }
 
+    cache false
+
     input:
-    path samplesheet
-    val platform
+    path versions
 
     output:
-    path '*.csv'       , emit: csv
-    path "versions.yml", emit: versions
-    
+    path "software_versions.tsv"     , emit: tsv
+    path 'software_versions_mqc.yaml', emit: yaml
 
-    script: // This script is bundled with the pipeline, in nf-core/rnaseq/bin/
+    script: // This script is bundled with the pipeline, in nf-core/viralrecon/bin/
     """
-    check_samplesheet.py \\
-        $samplesheet \\
-        samplesheet.valid.csv \\
-        --platform $platform
-    cat <<-END_VERSIONS > versions.yml
-    ${getProcessName(task.process)}:
-        python: \$(python --version | sed 's/Python //g')
-    END_VERSIONS
+    echo $workflow.manifest.version > pipeline.version.txt
+    echo $workflow.nextflow.version > nextflow.version.txt
+    scrape_software_versions.py &> software_versions_mqc.yaml
     """
 }

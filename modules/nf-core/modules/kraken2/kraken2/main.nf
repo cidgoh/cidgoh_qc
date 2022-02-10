@@ -1,5 +1,5 @@
 // Import generic module functions
-include { initOptions; saveFiles; getSoftwareName; getProcessName } from './functions'
+include { initOptions; saveFiles; getSoftwareName } from './functions'
 
 params.options = [:]
 options        = initOptions(params.options)
@@ -26,9 +26,10 @@ process KRAKEN2_KRAKEN2 {
     tuple val(meta), path('*classified*')  , emit: classified
     tuple val(meta), path('*unclassified*'), emit: unclassified
     tuple val(meta), path('*report.txt')   , emit: txt
-    path "versions.yml"                    , emit: versions
+    path '*.version.yml'                   , emit: version
 
     script:
+    def software     = getSoftwareName(task.process)
     def prefix       = options.suffix  ? "${meta.id}${options.suffix}"  : "${meta.id}"
     def paired       = meta.single_end ? "" : "--paired"
     def classified   = meta.single_end ? "${prefix}.classified.fastq"   : "${prefix}.classified#.fastq"
@@ -47,10 +48,6 @@ process KRAKEN2_KRAKEN2 {
 
     pigz -p $task.cpus *.fastq
 
-    cat <<-END_VERSIONS > versions.yml
-    ${getProcessName(task.process)}:
-        ${getSoftwareName(task.process)}: \$(echo \$(kraken2 --version 2>&1) | sed 's/^.*Kraken version //; s/ .*\$//')
-        pigz: \$( pigz --version 2>&1 | sed 's/pigz //g' )
-    END_VERSIONS
+    echo \$(kraken2 --version 2>&1) | sed 's/^.*Kraken version //; s/ .*\$//' > ${software}.version.yml
     """
 }

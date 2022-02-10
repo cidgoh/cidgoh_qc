@@ -19,6 +19,7 @@ def getProcessName(task_process) {
 //
 // Function to initialise default values and to generate a Groovy Map of available options for nf-core modules
 //
+
 def initOptions(Map args) {
     def Map options = [:]
     options.args            = args.args ?: ''

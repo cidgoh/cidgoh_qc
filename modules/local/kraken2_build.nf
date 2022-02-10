@@ -6,8 +6,6 @@ options        = initOptions(params.options)
 
 process KRAKEN2_BUILD {
     label 'process_high'
-    cpus 8
-
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), meta:[:], publish_by_meta:[]) }
@@ -32,6 +30,7 @@ process KRAKEN2_BUILD {
     kraken2-build --db kraken2_db --threads $task.cpus $options.args  --download-taxonomy
     kraken2-build --db kraken2_db --threads $task.cpus $options.args2 --download-library $library
     kraken2-build --db kraken2_db --threads $task.cpus $options.args3 --build
+
     echo \$(kraken2 --version 2>&1) | sed 's/^.*Kraken version //; s/ .*\$//' > ${software}.version.txt
     """
 }
