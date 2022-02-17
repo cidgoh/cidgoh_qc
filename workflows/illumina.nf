@@ -17,7 +17,7 @@ include { KRAKEN2                                             } from '../modules
 include { KRONA_DB                                            } from '../modules/local/krona_db'
 include { KRONA                                               } from '../modules/local/krona'                       addParams( options: modules['krona']                      )
 include { CENTRIFUGE_DB_PREPARATION                           } from '../modules/local/centrifuge_db_preparation'
-include { CENTRIFUGE                                          } from '../modules/local/centrifuge'  addParams( options: modules['centrifuge'] ) 
+include { CENTRIFUGE                                          } from '../modules/local/centrifuge'  addParams( options: modules['centrifuge'] )
 include { INPUT_CHECK        } from '../subworkflows/local/input_check'             addParams( options: [:] )
 
 
@@ -107,7 +107,7 @@ workflow ILLUMINA {
     }
     .set { ch_fastq }
     ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
-    
+
     /*
     ================================================================================
              MODULE: Concatenate FastQ files from same sample if required
@@ -117,6 +117,7 @@ workflow ILLUMINA {
     CAT_FASTQ (
         ch_fastq.multiple
     )
+    .reads
     .mix(ch_fastq.single)
     .set { ch_cat_fastq }
 
@@ -133,38 +134,43 @@ workflow ILLUMINA {
     else {
         FASTQC_FASTP (
         ch_cat_fastq
-        ) 
-        ch_kraken2_fastq    =         FASTQC_FASTP.out.
-        ch_centrifure_fastq    = FASTQC_TRIMGALORE.out.reads
-        
+        )
+        ch_kraken2_fastq       = FASTQC_FASTP.out.reads
+        ch_centrifuge_fastq    = FASTQC_FASTP.out.reads
+
         ch_versions = ch_versions.mix(FASTQC_FASTP.out.fastqc_version.first().ifEmpty(null))
         ch_versions = ch_versions.mix(FASTQC_FASTP.out.fastp_version.first().ifEmpty(null))
-     
-    }    
+
+    }
 
     /*
     ================================================================================
                                     Taxonomic information
     ================================================================================
     */
-    CENTRIFUGE_DB_PREPARATION ( ch_centrifuge_db_file )
-    CENTRIFUGE (
-        ch_centrifuge_fastq,
-        CENTRIFUGE_DB_PREPARATION.out.db
-    )
-    ch_versions = ch_versions.mix(CENTRIFUGE.out.version.first().ifEmpty(null))
+    if (!params.skip_centrifuge){
+      CENTRIFUGE_DB_PREPARATION ( ch_centrifuge_db_file )
+      CENTRIFUGE (
+          ch_centrifuge_fastq,
+          CENTRIFUGE_DB_PREPARATION.out.db
+      )
+      ch_versions = ch_versions.mix(CENTRIFUGE.out.version.first().ifEmpty(null))
 
-    
-    KRAKEN2_DB_PREPARATION (
-        ch_kraken2_db_file
-    )
-    KRAKEN2 (
-        ch_kraken2_fastq,
-        KRAKEN2_DB_PREPARATION.out.db
-        
-    )
-    ch_versions = ch_versions.mix(KRAKEN2.out.version.first().ifEmpty(null))
-    
+    }
+
+    if (!params.skip_kraken2){
+      KRAKEN2_DB_PREPARATION (
+          ch_kraken2_db_file
+      )
+      KRAKEN2 (
+          ch_kraken2_fastq,
+          KRAKEN2_DB_PREPARATION.out.db
+
+      )
+      ch_versions = ch_versions.mix(KRAKEN2.out.version.first().ifEmpty(null))
+
+    }
+
     if (( params.centrifuge_db || params.kraken2_db ) && !params.skip_krona) {
         KRONA_DB ()
         CENTRIFUGE.out.results_for_krona.mix(KRAKEN2.out.results_for_krona)
