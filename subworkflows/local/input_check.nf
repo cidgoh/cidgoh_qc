@@ -30,7 +30,7 @@ workflow INPUT_CHECK {
             .set { sample_info }
     }
 
-    
+
 
     emit:
     sample_info // channel: [ val(meta), [ reads ] ]
