@@ -1,21 +1,11 @@
-include { initOptions; saveFiles; getSoftwareName; getProcessName } from './functions'
-
-params.options = [:]
-options        = initOptions(params.options)
-
 process FASTP {
     tag "$meta.id"
     label 'process_low'
 
-    publishDir "${params.outdir}",
-        mode: params.publish_dir_mode,
-        saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:getSoftwareName(task.process), meta:meta, publish_by_meta:['id']) }
-
-
-    conda (params.enable_conda ? 'bioconda::fastp=0.20.1' : null)
+    conda (params.enable_conda ? 'bioconda::fastp=0.23.2' : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/fastp:0.20.1--h8b12597_0' :
-        'quay.io/biocontainers/fastp:0.20.1--h8b12597_0' }"
+        'https://depot.galaxyproject.org/singularity/fastp:0.23.2--h79da9fb_0' :
+        'quay.io/biocontainers/fastp:0.23.2--h79da9fb_0' }"
 
     input:
     tuple val(meta), path(reads)
@@ -30,6 +20,9 @@ process FASTP {
     path "versions.yml"                       , emit: versions
     tuple val(meta), path('*.fail.fastq.gz')  , optional:true, emit: reads_fail
     tuple val(meta), path('*.merged.fastq.gz'), optional:true, emit: reads_merged
+
+    when:
+    task.ext.when == null || task.ext.when
 
     script:
     def args = task.ext.args ?: ''
